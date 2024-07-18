@@ -15,7 +15,7 @@ while True:
     target_index = 0
 
     try:
-        target_index = int(input("Введите номер элемента: "))
+        target_index = int(input("Введите номер элемента, если хотите получить доступ к содержимому  папок и файлов каталога, иначе нажмите 0 для завершения работы программы: "))
     except:
         print("Error")
         continue
@@ -25,6 +25,13 @@ while True:
             with open(item, 'r') as file:
                 content = file.read()
                 print(content)
+        elif os.path.isdir(item):
+            sub_items = os.listdir(os.path.join(path, item))
+            print("Содержимое каталога:")
+            for sub_n, sub_item in enumerate(sub_items):
+                print(f"{sub_n + 1} {sub_item}")
+        else:
+            print("Это не файл и не папка")
     elif target_index == 0:
         print("Завершение работы...")
         break
