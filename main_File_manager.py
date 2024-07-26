@@ -1,39 +1,54 @@
 import os
 import os.path
-
-# TODO: Добавить примечания для пользователя
-# TODO: Сделать просмотр содержимого папок
+import sys
 
 
-path = '.'
-
-while True:
+def get_dirlist(path="."):
     rez = sorted(os.listdir(path))
-    n: int
-    for n, item in enumerate(rez):
-        print(n+1, item)
-    target_index = 0
+    return len(rez), rez
 
-    try:
-        target_index = int(input("Введите номер элемента, если хотите получить доступ к содержимому  папок и файлов каталога, иначе нажмите 0 для завершения работы программы: "))
-    except:
-        print("Error")
-        continue
-    if target_index <= len(rez) and target_index > 0:
-        item = rez[target_index - 1]
-        if os.path.isfile(item):
-            with open(item, 'r') as file:
-                content = file.read()
-                print(content)
-        elif os.path.isdir(item):
-            sub_items = os.listdir(os.path.join(path, item))
-            print("Содержимое каталога:")
-            for sub_n, sub_item in enumerate(sub_items):
-                print(f"{sub_n + 1} {sub_item}")
-        else:
-            print("Это не файл и не папка")
-    elif target_index == 0:
-        print("Завершение работы...")
-        break
-    else:
-        print("Введённый номер не соответствует количеству элементов списка")
+
+def print_list(dir_list):
+    n: int
+    for n, dir_item in enumerate(dir_list):
+        print(n + 1, dir_item)
+
+
+def user_input(max_size):
+    target_index = 0
+    while True:
+        try:
+            target_index = int(input(
+                "Введите номер элемента, если хотите получить доступ к содержимому  папок и файлов каталога, иначе нажмите 0 для завершения работы программы: "))
+            if max_size >= target_index > 0:
+                return target_index
+            if target_index == 0:
+                print("Завершение работы...")
+                sys.exit(0)
+            else:
+                print("Введённый номер не соответствует количеству элементов списка")
+        except ValueError:
+            print("Error")
+            continue
+
+
+def print_file(path):
+    with open(path, 'r') as file:
+        content = file.read()
+        print(content)
+
+
+max_elements, list_elements = get_dirlist()
+print_list(list_elements)
+
+dir_index = user_input(max_elements)
+
+item = list_elements[dir_index - 1]
+if os.path.isfile(item):
+    print_file(item)
+elif os.path.isdir(item):
+    n, sub_items = get_dirlist(os.path.join(".", item))
+    print("Содержимое каталога:")
+    print_list(sub_items)
+else:
+    print("Это не файл и не папка")
